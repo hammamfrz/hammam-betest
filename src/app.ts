@@ -6,6 +6,8 @@ import swagger from "./utils/swagger";
 import { protocol, port, hostname } from "./utils/env";
 import { serve, setup } from "swagger-ui-express";
 
+import authRoutes from "./app/auth/routes";
+
 const app: Express = express();
 
 app.use(cors());
@@ -14,6 +16,8 @@ app.use(compression());
 app.use(urlencoded({ extended: false }));
 app.use(json());
 app.use("/api-docs", serve, setup(swagger));
+
+app.use("/api", authRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({ ping: "pong" });
