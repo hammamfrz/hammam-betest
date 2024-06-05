@@ -2,36 +2,46 @@ version: '3.8'
 name: backend
 services:
   app:
-    container_name: app
+    container_name: hammam_betest
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      APP_PROTOCOL: "http"
+      APP_HOSTNAME: "0.0.0.0"
+      APP_PORT: "8000"
+      MONGODB_URL: "mongodb://db_hammam_betest:27017/db_hammam_betest?replicaSet=rs0"
+      REDIS_URL: "redis://redis_hammam_betest:6379"
+      JWT_SECRET_KEY: "secret123"
+      JWT_EXPIRED: "1d"
     ports:
       - 8000:8000
     depends_on:
-      - postgres
-    networks:
-      - shared
+      - redis
+      - db_hammam_betest1
 
-  postgres:
-    image: postgres:15-alpine
-    container_name: postgres
-    restart: always
+  redis:
+    container_name: redis_hammam_betest
+    image: redis:6.0.9
     ports:
-      - 5433:5432
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=db
+      - 6379:6379
+
+  # mongo: 
+  #   container_name: mongo_hammam_betest
+  #   image: mongo:latest
+  #   ports:
+  #     - 27017:27017
+  #   networks:
+  #     - mongo-network
+
+  db_hammam_betest1:
+    container_name: db_hammam_betest
+    image: mongo:latest
+    command: mongod --replSet rs0 --port 27017 --bind_ip_all
+    ports:
+      - "27017:27017"
     volumes:
-      - postgres:/var/lib/postgresql/data
-    networks:
-      - shared
+      - "mongo_data:/data/db"
 
 volumes:
-  postgres:
-    name: postgres-volume
-
-networks:
-  shared:
-    driver: bridge
+  mongo_data:

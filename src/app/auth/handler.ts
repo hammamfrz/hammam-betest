@@ -61,6 +61,8 @@ export async function registerUser(
         emailAddress,
         identityNumber,
         password: hashedPassword,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
     });
 
@@ -72,7 +74,7 @@ export async function registerUser(
       identityNumber: user.identityNumber,
     });
 
-    await redisClient.set(`user:${user.id}`, token, "EX", 3600);
+    await redisClient.set(`user:${user.id}`, token, { EX: 3600 })
 
     res.status(201).json({
       user,
@@ -127,7 +129,7 @@ export async function loginUser(
       identityNumber: user.identityNumber,
     });
 
-    await redisClient.set(`user:${user.id}`, token, "EX", 3600);
+    await redisClient.set(`user:${user.id}`, token, { EX: 3600 });
 
     const {
       password: userPassword,
@@ -241,7 +243,9 @@ export async function deleteUser(
       },
     });
 
-    res.status(204).json();
+    res.status(204).json({
+        message: "User deleted",
+    });
   } catch (error) {
     next(error);
   }

@@ -7,6 +7,8 @@ import bcrypt from "bcrypt";
 import { zParse } from "../../../utils/validate";
 import { registerUserSchema, loginUserSchema, updateUserSchema, getUserByAccountNumberSchema, getUserByIdentityNumberSchema } from "../validation";
 import { RequestWithUser } from "../../../middleware/auth";
+import { create } from "domain";
+import exp from "constants";
 
 // Mock dependencies
 jest.mock("../../../utils/prisma", () => ({
@@ -112,6 +114,8 @@ describe("User Controller", () => {
           emailAddress: req.body.emailAddress,
           identityNumber: req.body.identityNumber,
           password: "hashedPassword",
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
         },
       });
       expect(JwtService.generateToken).toHaveBeenCalledWith({
@@ -124,8 +128,7 @@ describe("User Controller", () => {
       expect(redisClient.set).toHaveBeenCalledWith(
         "user:1",
         "token",
-        "EX",
-        3600
+        {"EX": 3600}
       );
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith({
@@ -214,7 +217,7 @@ describe("User Controller", () => {
         accountNumber: "1234567890",
         identityNumber: "123456789",
       });
-      expect(redisClient.set).toHaveBeenCalledWith("user:1", "token", "EX", 3600);
+      expect(redisClient.set).toHaveBeenCalledWith("user:1", "token", {"EX": 3600});
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         data: {

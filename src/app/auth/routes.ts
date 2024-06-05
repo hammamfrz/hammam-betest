@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post("/register", catchAsync(registerUser));
 router.post("/login", catchAsync(loginUser));
-router.post("/update", auth, catchAsync(updateUser));
+router.put("/update", auth, catchAsync(updateUser));
 router.post("/delete", auth, catchAsync(deleteUser));
 router.get("/getMe", auth, catchAsync(getUser));
 router.get("/getByAccountNumber", auth, catchAsync(getUserByAccountNumber));

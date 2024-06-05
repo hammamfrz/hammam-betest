@@ -15,7 +15,7 @@
     "typescript",
     "prisma"
   ],
-  "author": "Hammam Fariz",
+  "author": "ms-hammam-betest",
   "license": "ISC",
   "devDependencies": {
     "@types/compression": "^1.7.2",
